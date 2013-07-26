@@ -1,0 +1,20 @@
+.gasquereg_form {
+	 width: 80%;
+	 margin: auto; /*Centers the form on the page*/
+	 padding: 0.6em;
+	 border: solid thin #CCC;
+	 border-radius: 0.5em;
+}
+.gasquereg_element_wrapper {
+	text-align: left;
+	margin: 0.5em;
+}
+.gasquereg_title {
+	text-align: left;
+}
+.gasquereg_submit_wrapper {
+	text-align: right;
+}
+.gasquereg_element_wrapper > input {
+    width: 100%;
+}

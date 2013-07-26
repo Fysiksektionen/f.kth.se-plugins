@@ -1,0 +1,28 @@
+To-do Features:
+*Delete forms
+*Delete answers
+*Search forms
+*Search answers
+*Form options
+	-Must be logged in?
+	-Opens/closes/expires
+	-Possible to change answer?
+*Element options
+	-Required
+	-Unique
+	-Default value
+*Class for elements
+	-Subclass for each tag
+*More element types
+	-Non-editable
+	-Checkboxes
+	-Radio buttons
+	-Selection dropdown menus
+	-All of HTML5 special types (email, telephone, url, date, time, datetime etc)
+*Slug for printing answers in posts
+	-Flags?
+*Integrate with Role Manager
+*Improve general layout of form
+	-Maybe more options?
+*Install script
+	-Manage tables with dbDiff (or what was it called?)
