@@ -5,6 +5,7 @@ To-do Features:
 *Search answers
 *Form options
 	-Must be logged in?
+	-Number of replies/user
 	-Opens/closes/expires
 	-Possible to change answer?
 *Element options
@@ -26,3 +27,4 @@ To-do Features:
 	-Maybe more options?
 *Install script
 	-Manage tables with dbDiff (or what was it called?)
+*Implement nonces to assure forms are properly submitted

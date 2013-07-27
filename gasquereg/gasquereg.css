@@ -18,3 +18,18 @@
 .gasquereg_element_wrapper > input {
     width: 100%;
 }
+.gasquereg_answers_table {
+	border-collapse: collapse;
+	width: 90%;
+	margin: auto;
+}
+.gasquereg_answers_table thead {
+	font-weight: bold;
+}
+.gasquereg_answers_table td {
+	margin: 0;
+	padding: 0.1em;
+}
+.gasquereg_answers_table tr:nth-child(even) {
+	background-color: #EEE;
+}
