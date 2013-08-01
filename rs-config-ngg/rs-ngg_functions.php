@@ -97,10 +97,10 @@ function rs_ngg_roles( $role_defs ) {
 	$defining_module_name = 'gasquereg';
 	
 	$args = array( 'valid_scopes' => array('blog' => 1) );
-	$display_name = __( 'Gallery Author', 'rs-config-ngg' );
-	$abbrev = __( 'Author' );
+	$display_name = 'Formulärförfattare';//__( 'Gallery Author', 'rs-config-ngg' );
+	$abbrev = 'Författare';//__( 'Author' );
 	$role_defs->add( 'gallery_author' , $defining_module_name, $display_name, $abbrev, 'rs', $args );
-	
+	/*
 	// note: term roles here would pertain to albums, but will be unavailable unless the db is revised to store the gallery-album relationship relationally.
 	$args = array( 'valid_scopes' => array('blog' => 1, 'term' => 1, 'object' => 1), 'objscope_equivalents' => array('rs_gallery_author') );
 	$display_name = __( 'Gallery Editor', 'rs-config-ngg' );
@@ -110,7 +110,7 @@ function rs_ngg_roles( $role_defs ) {
 	$args = array( 'valid_scopes' => array('blog' => 1) );
 	$display_name = __( 'Gallery Administrator', 'rs-config-ngg' );
 	$abbrev = __( 'Administrator' );
-	$role_defs->add( 'gallery_administrator' , $defining_module_name, $display_name, $abbrev, 'rs', $args );
+	$role_defs->add( 'gallery_administrator' , $defining_module_name, $display_name, $abbrev, 'rs', $args );*/
 	
 	return $role_defs;
 }
