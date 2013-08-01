@@ -45,7 +45,7 @@ function rs_ngg_data_sources( $data_sources ) {
 	$reqd_caps['edit']['gasquereg_form'][''] =	array( 'Gasquereg Manage others form' );
 	$reqd_caps['admin']['gasquereg_form'][''] = array( 'Gasquereg Manage others form' );
 
-	$args = array( 'reqd_caps' => $reqd_caps, 'uses_taxonomies' => array('ngg_album'), 
+	$args = array( 'reqd_caps' => $reqd_caps, //'uses_taxonomies' => array('ngg_album'), 
 					'edit_url' => 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=%s'
 			);
 	
@@ -457,9 +457,9 @@ function rs_ngg_deactivate() {
 
 //add_filter( 'define_administrator_caps_rs', 'rs_ngg_administrator_caps' );
 //add_filter( 'scoper_access_name', 'rs_ngg_access_name' );
-add_filter( 'define_data_sources_rs', 'rs_ngg_data_sources' );
+//add_filter( 'define_data_sources_rs', 'rs_ngg_data_sources' );
 //add_filter( 'define_taxonomies_rs', 'rs_ngg_taxonomies' );
-add_filter( 'define_capabilities_rs', 'rs_ngg_capabilities' );
+//add_filter( 'define_capabilities_rs', 'rs_ngg_capabilities' );
 //add_filter( 'define_roles_rs', 'rs_ngg_roles' );
 //add_filter( 'define_role_caps_rs', 'rs_ngg_role_caps' );
 //add_filter( 'default_otype_options_rs', 'rs_ngg_default_otype_options' );

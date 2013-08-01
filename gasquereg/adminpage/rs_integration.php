@@ -23,7 +23,7 @@
 function rs_gasquereg_data_sources( $data_sources ) {
 	$defining_module_name = 'gasquereg';
 	
-	$src_name = 'gasquereg_forms';
+	$src_name = 'gasquereg_form';
 	$display_name = 'Anmälningsformulär';
 	$display_name_plural = 'Anmälningsformulär';
 
@@ -32,8 +32,8 @@ function rs_gasquereg_data_sources( $data_sources ) {
 	$col_name = 'title';
 	
 	$reqd_caps = array();
-	$reqd_caps['edit']['gasquereg_forms'][''] =	array( 'Gasquereg Manage others form' );
-	$reqd_caps['admin']['gasquereg_forms'][''] = array( 'Gasquereg Manage others form' );
+	$reqd_caps['edit']['gasquereg_form'][''] =	array( 'Gasquereg Manage others form' );
+	$reqd_caps['admin']['gasquereg_form'][''] = array( 'Gasquereg Manage others form' );
 
 	$args = array( 'reqd_caps' => $reqd_caps, 'edit_url' => 'admin.php?page=gasquereg&action=edit&form=%s');
 	$src =& $data_sources->add( $src_name, $defining_module_name, $display_name, $display_name_plural, $table_basename, $col_id, $col_name, $args );
@@ -52,7 +52,7 @@ function rs_gasquereg_administrator_caps( $admin_caps ) {
 // A plugin's testing of custom capabilities using current_user_can is what qualifies it for custom role scoping.
 function rs_gasquereg_capabilities( $cap_defs ) {
 	$defining_module_name = 'gasquereg';
-	$src_name = 'gasquereg_forms';				// note: plugins can also define blogwide-only caps by defining and referencing a "fake" data source which merely provides a meaningful display name.  Set data source property no_object_roles to true.
+	$src_name = 'gasquereg_form';				// note: plugins can also define blogwide-only caps by defining and referencing a "fake" data source which merely provides a meaningful display name.  Set data source property no_object_roles to true.
 	$object_type = 'gasquereg_form';
 	
 	$op_type = 'edit';
@@ -61,7 +61,7 @@ function rs_gasquereg_capabilities( $cap_defs ) {
 	
 	$args = array( 'attributes' => array('others'),	'base_cap' => 'Gasquereg Manage form', 'no_custom_add' => true, 'no_custom_remove' => true );
 	$cap_defs->add( 'Gasquereg Manage others form', $defining_module_name, $src_name, $object_type, $op_type, $args );
-
+/*
 	$args = array( 'owner_privilege' => true );
 	$cap_defs->add( 'NextGEN Upload images', $defining_module_name, $src_name, $object_type, $op_type, $args );
 	$cap_defs->add( 'NextGEN Use TinyMCE', $defining_module_name, $src_name, $object_type, $op_type, $args );
@@ -75,7 +75,7 @@ function rs_gasquereg_capabilities( $cap_defs ) {
 	
 	$args = array( 'no_custom_remove' => true, 'no_custom_add' => true );	// we define this via define_administrator_caps_rs as THE administrator cap
 	$cap_defs->add( 'NextGEN Change options', $defining_module_name, $src_name, $object_type, $op_type, $args );
-	
+	*/
 	return $cap_defs;
 }
 
