@@ -43,10 +43,10 @@ define ('RS_CONFIG_NGG_FOLDER', dirname( plugin_basename(__FILE__) ) );
 global $wpdb;
 $wpdb->ngg_album2gallery_rs = $wpdb->prefix . 'ngg_album2gallery_rs'; 
 
-//require_once('agapetry_wp_core_lib.php');
+require_once('agapetry_wp_core_lib.php');
 require_once( 'rs-ngg_functions.php' );
 
-//add_action( 'init', 'rs_ngg_init', 1 );	// rs filters must be added before RS initialization
+add_action( 'init', 'rs_ngg_init', 1 );	// rs filters must be added before RS initialization
 
 register_activation_hook(__FILE__, 'rs_ngg_activate');
 register_deactivation_hook(__FILE__, 'rs_ngg_deactivate');

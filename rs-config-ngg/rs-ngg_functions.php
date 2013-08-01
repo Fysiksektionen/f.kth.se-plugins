@@ -31,28 +31,76 @@ function rs_ngg_access_name( $access_name ) {
  
 // Tell Role Scoper about data sources which NextGenGallery provides
 function rs_ngg_data_sources( $data_sources ) {
-	$defining_module_name = 'gasquereg';
+	$defining_module_name = 'nggallery';
 	
-	$src_name = 'gasquereg_form';
-	$display_name = 'Anmälningsformulär';//__('NGG Gallery', 'rs-config-ngg');
-	$display_name_plural = 'Anmälningsformulär';//__('NGG Galleries', 'rs-config-ngg');
+	$src_name = 'ngg_gallery';
+	$display_name = __('NGG Gallery', 'rs-config-ngg');
+	$display_name_plural = __('NGG Galleries', 'rs-config-ngg');
 
-	$table_basename = 'gasquereg_forms';
-	$col_id = 'id';
+	$table_basename = 'ngg_gallery';
+	$col_id = 'gid';
 	$col_name = 'title';
 	
 	$reqd_caps = array();
-	$reqd_caps['edit']['gasquereg_form'][''] =	array( 'Gasquereg Manage others form' );
-	$reqd_caps['admin']['gasquereg_form'][''] = array( 'Gasquereg Manage others form' );
+	$reqd_caps['edit']['ngg_gallery'][''] =	array( 'NextGEN Manage others gallery' );
+	$reqd_caps['admin']['ngg_gallery'][''] = array( 'NextGEN Manage others gallery' );
 
-	$args = array( 'reqd_caps' => $reqd_caps, //'uses_taxonomies' => array('ngg_album'), 
+	$args = array( 'reqd_caps' => $reqd_caps, 'uses_taxonomies' => array('ngg_album'), 
 					'edit_url' => 'admin.php?page=nggallery-manage-gallery&mode=edit&gid=%s'
 			);
 	
 	$src =& $data_sources->add( $src_name, $defining_module_name, $display_name, $display_name_plural, $table_basename, $col_id, $col_name, $args );
-	$src->cols->owner = 'createdBy';
+	$src->cols->owner = 'author';
 	
+	// === Object_types property setting is unnecessary for data sources with a single object type, if running RS 1.0.0-rc9.9226 or later
+	if ( ! version_compare( SCOPER_VERSION, '1.0.0-rc9.9226', '>=' ) ) {
+		$src->object_types = array( 'ngg_gallery' => (object) array( 'val' => 'ngg_gallery', 'display_name' => __('NGG Gallery', 'rs-config-ngg'), 'display_name_plural' => __('NGG Galleries', 'rs-config-ngg') ) );
+		$src->collections = array ('type' => 'object_types');
+	}
+	// ===
+
+
+	// This could be activated to provide listing query filtering if ngg adds a hook for it
+	// ( Currently, the 'query' filter is run through rs_ngg_query_galleries instead ).
+	//$src->query_hooks = (object) array( 'request' => 'ngg_galleries_request', 'distinct' => 'ngg_galleries_distinct' );
+	
+	// note: also requires 'taxonomies' definition
+	$display_name = __('NGG Album', 'rs-config-ngg');
+	$display_name_plural = __('NGG Albums', 'rs-config-ngg');
+	$table_basename = 'ngg_album';
+	$col_id = 'id';
+	$col_name = 'name';
+
+	$name = 'ngg_album';
+	
+	$args = array( 'is_taxonomy' => true,	'taxonomy_only' => true );
+	$data_sources->add( 'ngg_album', $defining_module_name, $display_name, $display_name_plural, $table_basename, $col_id, $col_name, $args );
+
 	return $data_sources;
+}
+
+// Tell Role Scoper about taxonomies which apply to NGG data sources
+// note: These would typically use the WP taxonomy tables, but in this case are based on custom taxonomy tables.
+function rs_ngg_taxonomies( $taxonomies ) {
+	$display_name = __('NGG Album', 'rs-config-ngg');
+	$display_name_plural = __('NGG Albums', 'rs-config-ngg');
+	$table_basename = 'nggalbum';
+	$defining_module_name = 'nggallery';
+	$uses_standard_schema = false;
+	$requires_term = false;			// since galleries are not required to be in at least one album, access limiting based on album membership (Album Restrictions) will not be applied
+
+	$args = array( 
+	'hierarchical' => false,
+	'source' => 'ngg_album', 	'table_term2obj_basename' => 'ngg_album2gallery_rs', 	'table_term2obj_alias' => '',
+	'cols' => (object) array( 
+		'count' => '', 'term2obj_tid' => 'album_id', 	'term2obj_oid' => 'gallery_id' 
+		),
+	'edit_url' => 'admin.php?page=nggallery-manage-album'
+	);
+
+	$temp = $taxonomies->add( 'ngg_album', $defining_module_name, $display_name, $display_name_plural, $uses_standard_schema, $requires_term, $args );
+
+	return $taxonomies;
 }
 
 // Tell Role Scoper which capability is THE administrator cap for NGG, ensuring the owning user is unhindered in defining RS role restrictions and assignments
@@ -64,17 +112,17 @@ function rs_ngg_administrator_caps( $admin_caps ) {
 // Tell Role Scoper about capabilities WHICH ARE ALREADY USED in current_user_can calls in the NextGenGallery source code.
 // A plugin's testing of custom capabilities using current_user_can is what qualifies it for custom role scoping.
 function rs_ngg_capabilities( $cap_defs ) {
-	$defining_module_name = 'gasquereg';
-	$src_name = 'gasquereg_form';				// note: plugins can also define blogwide-only caps by defining and referencing a "fake" data source which merely provides a meaningful display name.  Set data source property no_object_roles to true.
-	$object_type = 'gasquereg_form';
+	$defining_module_name = 'nggallery';
+	$src_name = 'ngg_gallery';				// note: plugins can also define blogwide-only caps by defining and referencing a "fake" data source which merely provides a meaningful display name.  Set data source property no_object_roles to true.
+	$object_type = 'ngg_gallery';
 	
 	$op_type = 'edit';
 	$args = array( 'owner_privilege' => true );
-	$cap_defs->add( 'Gasquereg Manage form', $defining_module_name, $src_name, $object_type, $op_type, $args );
+	$cap_defs->add( 'NextGEN Manage gallery', $defining_module_name, $src_name, $object_type, $op_type, $args );
 	
-	$args = array( 'attributes' => array('others'),	'base_cap' => 'Gasquereg Manage form', 'no_custom_add' => true, 'no_custom_remove' => true );
-	$cap_defs->add( 'Gasquereg Manage others form', $defining_module_name, $src_name, $object_type, $op_type, $args );
-/*
+	$args = array( 'attributes' => array('others'),	'base_cap' => 'NextGEN Manage gallery', 'no_custom_add' => true, 'no_custom_remove' => true );
+	$cap_defs->add( 'NextGEN Manage others gallery', $defining_module_name, $src_name, $object_type, $op_type, $args );
+
 	$args = array( 'owner_privilege' => true );
 	$cap_defs->add( 'NextGEN Upload images', $defining_module_name, $src_name, $object_type, $op_type, $args );
 	$cap_defs->add( 'NextGEN Use TinyMCE', $defining_module_name, $src_name, $object_type, $op_type, $args );
@@ -88,19 +136,19 @@ function rs_ngg_capabilities( $cap_defs ) {
 	
 	$args = array( 'no_custom_remove' => true, 'no_custom_add' => true );	// we define this via define_administrator_caps_rs as THE administrator cap
 	$cap_defs->add( 'NextGEN Change options', $defining_module_name, $src_name, $object_type, $op_type, $args );
-	*/
+	
 	return $cap_defs;
 }
 
 // Tell Role Scoper about new NGG-specific roles
 function rs_ngg_roles( $role_defs ) {
-	$defining_module_name = 'gasquereg';
+	$defining_module_name = 'nggallery';
 	
 	$args = array( 'valid_scopes' => array('blog' => 1) );
-	$display_name = 'Formulärförfattare';//__( 'Gallery Author', 'rs-config-ngg' );
-	$abbrev = 'Författare';//__( 'Author' );
+	$display_name = __( 'Gallery Author', 'rs-config-ngg' );
+	$abbrev = __( 'Author' );
 	$role_defs->add( 'gallery_author' , $defining_module_name, $display_name, $abbrev, 'rs', $args );
-	/*
+	
 	// note: term roles here would pertain to albums, but will be unavailable unless the db is revised to store the gallery-album relationship relationally.
 	$args = array( 'valid_scopes' => array('blog' => 1, 'term' => 1, 'object' => 1), 'objscope_equivalents' => array('rs_gallery_author') );
 	$display_name = __( 'Gallery Editor', 'rs-config-ngg' );
@@ -110,7 +158,7 @@ function rs_ngg_roles( $role_defs ) {
 	$args = array( 'valid_scopes' => array('blog' => 1) );
 	$display_name = __( 'Gallery Administrator', 'rs-config-ngg' );
 	$abbrev = __( 'Administrator' );
-	$role_defs->add( 'gallery_administrator' , $defining_module_name, $display_name, $abbrev, 'rs', $args );*/
+	$role_defs->add( 'gallery_administrator' , $defining_module_name, $display_name, $abbrev, 'rs', $args );
 	
 	return $role_defs;
 }
@@ -119,13 +167,13 @@ function rs_ngg_roles( $role_defs ) {
 // Note: these associations may be edited by the site administrator unless the Capability properties no_custom_add, no_custom_remove properties lock them into/out of the role in question.
 function rs_ngg_role_caps( $role_caps ) {
 
-	$role_caps['rs_gallery_author'] = array( 'Gasquereg Manage form' => true, 'Gasquereg Manage others form' => true);
+	$role_caps['rs_gallery_author'] = array( 'NextGEN Manage gallery' => true, 'NextGEN Upload images' => true, 'NextGEN Use TinyMCE' => true );
 	
-	/*$role_caps['rs_gallery_editor'] = array( 'NextGEN Manage gallery' => true, 'NextGEN Upload images' => true, 'NextGEN Manage others gallery' => true, 'NextGEN Use TinyMCE' => true );
+	$role_caps['rs_gallery_editor'] = array( 'NextGEN Manage gallery' => true, 'NextGEN Upload images' => true, 'NextGEN Manage others gallery' => true, 'NextGEN Use TinyMCE' => true );
 	
 	$role_caps['rs_gallery_administrator'] = array( 'NextGEN Manage gallery' => true, 'NextGEN Upload images' => true, 'NextGEN Manage others gallery' => true,
 													'NextGEN Gallery overview' => true, 'NextGEN Manage tags' => true, 'NextGEN Edit album' => true,
-													'NextGEN Change style' => true,		'NextGEN Change options' => true, 'NextGEN Use TinyMCE' => true );*/
+													'NextGEN Change style' => true,		'NextGEN Change options' => true, 'NextGEN Use TinyMCE' => true );
 												
 	return $role_caps;
 }
@@ -429,13 +477,13 @@ function rs_ngg_init() {
 		rs_ngg_sync_albums();
 		
 	if ( $db_okay ) {
-		/*add_filter( 'caps_granted_from_any_objrole_rs', 'rs_ngg_any_objrole_caps' );		// not needed with Role Scoper >= 1.3
+		add_filter( 'caps_granted_from_any_objrole_rs', 'rs_ngg_any_objrole_caps' );		// not needed with Role Scoper >= 1.3
 		add_filter( 'caps_to_generate_object_id_rs', 'rs_ngg_generate_object_id_caps' );	// not needed with Role Scoper >= 1.3
 		
 		add_filter( 'scoper_admin_hardway_uris', 'rs_ngg_hardway_uris');
 		
 		add_action( 'check_admin_referer', 'rs_ngg_restrict_page_add' );
-		add_filter( 'query', 'rs_ngg_query_hardway' );*/
+		add_filter( 'query', 'rs_ngg_query_hardway' );
 	} else {
 		$message = sprintf(__('Role Scoping for NextGen Gallery could not be activated because the NGG database tables are missing.', 'rs-config-ngg') );
 		$func_body = 'echo ' . "'" . '<div id="message" class="error fade"><p><strong>' . $message . '</strong></p></div>' . "'" . ';';
@@ -455,12 +503,12 @@ function rs_ngg_deactivate() {
 	delete_option('rs_ngg_album_sync_done');
 }
 
-//add_filter( 'define_administrator_caps_rs', 'rs_ngg_administrator_caps' );
-//add_filter( 'scoper_access_name', 'rs_ngg_access_name' );
-//add_filter( 'define_data_sources_rs', 'rs_ngg_data_sources' );
-//add_filter( 'define_taxonomies_rs', 'rs_ngg_taxonomies' );
-//add_filter( 'define_capabilities_rs', 'rs_ngg_capabilities' );
-//add_filter( 'define_roles_rs', 'rs_ngg_roles' );
-//add_filter( 'define_role_caps_rs', 'rs_ngg_role_caps' );
-//add_filter( 'default_otype_options_rs', 'rs_ngg_default_otype_options' );
+add_filter( 'define_administrator_caps_rs', 'rs_ngg_administrator_caps' );
+add_filter( 'scoper_access_name', 'rs_ngg_access_name' );
+add_filter( 'define_data_sources_rs', 'rs_ngg_data_sources' );
+add_filter( 'define_taxonomies_rs', 'rs_ngg_taxonomies' );
+add_filter( 'define_capabilities_rs', 'rs_ngg_capabilities' );
+add_filter( 'define_roles_rs', 'rs_ngg_roles' );
+add_filter( 'define_role_caps_rs', 'rs_ngg_role_caps' );
+add_filter( 'default_otype_options_rs', 'rs_ngg_default_otype_options' );
 ?>

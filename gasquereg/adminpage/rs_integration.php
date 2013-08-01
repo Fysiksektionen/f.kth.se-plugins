@@ -38,7 +38,6 @@ function rs_gasquereg_data_sources( $data_sources ) {
 	$args = array( 'reqd_caps' => $reqd_caps, 'edit_url' => 'admin.php?page=gasquereg&action=edit&form=%s');
 	$src =& $data_sources->add( $src_name, $defining_module_name, $display_name, $display_name_plural, $table_basename, $col_id, $col_name, $args );
 	$src->cols->owner = 'createdBy';
-	error_log('Gasquereg rs data sources added');
 	return $data_sources;
 }
 
@@ -100,7 +99,7 @@ function rs_gasquereg_roles( $role_defs ) {
 	$role_defs->add( 'gallery_administrator' , $defining_module_name, $display_name, $abbrev, 'rs', $args );*/
 	
 	$args = array( 'valid_scopes' => array('blog' => 1, 'object' => 1) );
-	$display_name = 'Författare av formulär - hej';//__( 'Gallery Author', 'rs-config-ngg' );
+	$display_name = 'Författare av formulär';//__( 'Gallery Author', 'rs-config-ngg' );
 	$abbrev = 'Författare';
 	$role_defs->add( 'form_author' , $defining_module_name, $display_name, $abbrev, 'rs', $args );
 	
