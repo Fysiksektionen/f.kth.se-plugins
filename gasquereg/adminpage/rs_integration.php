@@ -100,7 +100,7 @@ function rs_gasquereg_roles( $role_defs ) {
 	$role_defs->add( 'gallery_administrator' , $defining_module_name, $display_name, $abbrev, 'rs', $args );*/
 	
 	$args = array( 'valid_scopes' => array('blog' => 1, 'object' => 1) );
-	$display_name = 'Författare av formulär';//__( 'Gallery Author', 'rs-config-ngg' );
+	$display_name = 'Författare av formulär - hej';//__( 'Gallery Author', 'rs-config-ngg' );
 	$abbrev = 'Författare';
 	$role_defs->add( 'form_author' , $defining_module_name, $display_name, $abbrev, 'rs', $args );
 	

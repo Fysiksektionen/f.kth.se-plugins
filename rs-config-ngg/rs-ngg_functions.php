@@ -70,10 +70,10 @@ function rs_ngg_capabilities( $cap_defs ) {
 	
 	$op_type = 'edit';
 	$args = array( 'owner_privilege' => true );
-	$cap_defs->add( 'NextGEN Manage gallery', $defining_module_name, $src_name, $object_type, $op_type, $args );
+	$cap_defs->add( 'Gasquereg Manage form', $defining_module_name, $src_name, $object_type, $op_type, $args );
 	
-	$args = array( 'attributes' => array('others'),	'base_cap' => 'NextGEN Manage gallery', 'no_custom_add' => true, 'no_custom_remove' => true );
-	$cap_defs->add( 'NextGEN Manage others gallery', $defining_module_name, $src_name, $object_type, $op_type, $args );
+	$args = array( 'attributes' => array('others'),	'base_cap' => 'Gasquereg Manage form', 'no_custom_add' => true, 'no_custom_remove' => true );
+	$cap_defs->add( 'Gasquereg Manage others form', $defining_module_name, $src_name, $object_type, $op_type, $args );
 /*
 	$args = array( 'owner_privilege' => true );
 	$cap_defs->add( 'NextGEN Upload images', $defining_module_name, $src_name, $object_type, $op_type, $args );
@@ -119,7 +119,7 @@ function rs_ngg_roles( $role_defs ) {
 // Note: these associations may be edited by the site administrator unless the Capability properties no_custom_add, no_custom_remove properties lock them into/out of the role in question.
 function rs_ngg_role_caps( $role_caps ) {
 
-	$role_caps['rs_gallery_author'] = array( 'NextGEN Manage gallery' => true, 'NextGEN Upload images' => true, 'NextGEN Use TinyMCE' => true );
+	$role_caps['rs_gallery_author'] = array( 'Gasquereg Manage form' => true, 'Gasquereg Manage others form' => true);
 	
 	/*$role_caps['rs_gallery_editor'] = array( 'NextGEN Manage gallery' => true, 'NextGEN Upload images' => true, 'NextGEN Manage others gallery' => true, 'NextGEN Use TinyMCE' => true );
 	
@@ -460,7 +460,7 @@ function rs_ngg_deactivate() {
 add_filter( 'define_data_sources_rs', 'rs_ngg_data_sources' );
 //add_filter( 'define_taxonomies_rs', 'rs_ngg_taxonomies' );
 add_filter( 'define_capabilities_rs', 'rs_ngg_capabilities' );
-add_filter( 'define_roles_rs', 'rs_ngg_roles' );
-add_filter( 'define_role_caps_rs', 'rs_ngg_role_caps' );
+//add_filter( 'define_roles_rs', 'rs_ngg_roles' );
+//add_filter( 'define_role_caps_rs', 'rs_ngg_role_caps' );
 //add_filter( 'default_otype_options_rs', 'rs_ngg_default_otype_options' );
 ?>
