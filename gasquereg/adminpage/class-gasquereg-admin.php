@@ -24,6 +24,8 @@ class GasqueregAdmin {
 			<button id="addButton" class="button">Nytt element</button>
 			<input type="submit" name="saveForm" id="saveButton" value="Spara" class="button">
 		</form></div>';
+		add_meta_box("gasquereg", "Alternativ", array( &$this, 'options_meta_box' ), "gasquereq");
+		do_meta_boxes('gasquereg','advanced',null);
 	}
 	function printNewForm() {
 		global $wpdb;
@@ -108,6 +110,9 @@ class GasqueregAdmin {
 		$this->error_message = $msg;
 		echo '<p><em>'.$msg.'</em></p>';
 		return -1;
+	}
+	function options_meta_box(){
+		echo 'Hello world';
 	}
 }
 ?>

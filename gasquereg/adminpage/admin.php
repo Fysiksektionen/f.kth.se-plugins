@@ -1,8 +1,10 @@
 <?php
 require_once "class-gasquereg-admin.php";
+require_once "rs_integration.php";
 $gasqueregAdmin = new GasqueregAdmin();
 function gasquereg_add_admin_menu() {
 	add_menu_page('Gasque-formulär', 'Gasque-formulär', 'manage_options', 'gasquereg', 'gasquereg_menu_page');
+	error_log('Gasquerwg admin page added');
 }
 //Manages ordinairy pages
 function gasquereg_menu_page() {
@@ -46,7 +48,7 @@ function gasquereg_admin_redirect() {
 	}
 }
 
-function my_enqueue($hook) {
+function gasquereg_enqueue_scripts($hook) {
     //if( 'gasquereg.php' != $hook )
         //return;
 		
@@ -61,7 +63,18 @@ function my_enqueue($hook) {
 	
 	wp_enqueue_style('gasqueRegCreateFormCSS', plugins_url('createForm.css', __FILE__));
 }
+
 add_action( 'admin_menu', 'gasquereg_add_admin_menu' );
 add_action('wp_loaded','gasquereg_admin_redirect');
-add_action( 'admin_enqueue_scripts', 'my_enqueue' );
+add_action( 'admin_enqueue_scripts', 'gasquereg_enqueue_scripts' );
+
+//add_filter( 'define_administrator_caps_rs', 'rs_ngg_administrator_caps' );
+//add_filter( 'scoper_access_name', 'rs_ngg_access_name' );
+add_filter( 'define_data_sources_rs', 'rs_gasquereg_data_sources' );
+//add_filter( 'define_taxonomies_rs', 'rs_ngg_taxonomies' );
+add_filter( 'define_capabilities_rs', 'rs_gasquereg_capabilities' );
+add_filter( 'define_roles_rs', 'rs_gasquereg_roles' );
+add_filter( 'define_role_caps_rs', 'rs_gasquereg_role_caps' );
+error_log('Gasquereg filters and hooks added');
+//add_filter( 'default_otype_options_rs', 'rs_gasquereg_default_otype_options' );
 ?>
