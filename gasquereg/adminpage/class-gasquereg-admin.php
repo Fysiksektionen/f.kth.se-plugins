@@ -3,9 +3,10 @@ require "class-list-of-forms.php";
 require "class-table-of-answers.php";
 class GasqueregAdmin {
 	public $error_message = "";
+	
 	function printExistingForm($formId) {
 		global $wpdb;
-		
+		add_meta_box("gasquereg", "Alternativ", array( &$this, 'options_meta_box' ), "gasquereq");
 		$data = $wpdb->get_results("SELECT id,tag,description,type FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " ORDER BY order_in_form",ARRAY_A);
 		//Pass the elements to be printed by jQuery
 		wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
@@ -13,19 +14,40 @@ class GasqueregAdmin {
 		if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
 		echo '
 		<div class="wrap"><h1>Redigera formulär</h1>
-		<form action="?page='.$_GET['page'].'&action=edit&form='.$formId.'" method="post">
-			<div id="titlediv">
-				<div id="titlewrap">
-					<label id="title-prompt-text" class="screen-reader-text" for="title">Formulärtitel</label>
-					<input id="title" type="text" autocomplete="off" value="'.$title.'" size="30" name="title">
+		<form action="?page='.$_GET['page'].'&action=edit&form='.$formId.'" method="post">';
+ 
+        /* Used to save closed meta boxes and their order */
+        wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
+        wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
+		echo '
+			<div id="poststuff">
+				<div id="post-body" class="metabox-holder columns-'.(1 == get_current_screen()->get_columns() ? '1' : '2').'">
+					<div id="post-body-content">
+						<div id="titlediv">
+							<div id="titlewrap">
+								<label id="title-prompt-text" class="screen-reader-text" for="title">Formulärtitel</label>
+								<input id="title" type="text" autocomplete="off" value="'.$title.'" size="30" name="title">
+							</div>
+						</div>
+						<ul id="listOfFormElements"></ul>
+						<button id="addButton" class="button">Nytt element</button>
+						<input type="submit" name="saveForm" id="saveButton" value="Spara" class="button">
+					</div>
+					<div id="postbox-container-1" class="postbox-container">';
+		do_meta_boxes('gasquereq','side',null);
+		echo '			</div>
+	 
+					<div id="postbox-container-2" class="postbox-container">';
+		do_meta_boxes('gasquereq','normal',null);
+		do_meta_boxes('gasquereq','advanced',null);
+		echo '			</div>
 				</div>
 			</div>
-			<ul id="listOfFormElements"></ul>
-			<button id="addButton" class="button">Nytt element</button>
-			<input type="submit" name="saveForm" id="saveButton" value="Spara" class="button">
-		</form></div>';
-		add_meta_box("gasquereg", "Alternativ", array( &$this, 'options_meta_box' ), "gasquereq");
-		do_meta_boxes('gasquereg','advanced',null);
+		</form>
+		</div>';
+		//do_action('object_edit_ui_rs');
+		//
+		//do_meta_boxes('gasquereg','advanced',null);
 	}
 	function printNewForm() {
 		global $wpdb;
