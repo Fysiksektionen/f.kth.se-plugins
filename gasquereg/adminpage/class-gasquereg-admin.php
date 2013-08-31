@@ -3,21 +3,25 @@ require "class-list-of-forms.php";
 require "class-table-of-answers.php";
 class GasqueregAdmin {
 	public $error_message = "";
-	
-	function printExistingForm($formId) {
+	function editPage($formId = -1) {
 		global $wpdb;
-		add_meta_box("gasquereg", "Alternativ", array( &$this, 'options_meta_box' ), "gasquereq");
-		$data = $wpdb->get_results("SELECT id,tag,description,type FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " ORDER BY order_in_form",ARRAY_A);
-		//Pass the elements to be printed by jQuery
-		wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
-		$title = $wpdb->get_var("SELECT title FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
-		if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
-		echo '
-		<div class="wrap"><h1>Redigera formulär</h1>
-		<form action="?page='.$_GET['page'].'&action=edit&form='.$formId.'" method="post">';
- 
-        /* Used to save closed meta boxes and their order */
-        wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
+		add_meta_box("gasquereg", "Alternativ", array( &$this, 'options_meta_box' ), 'gasquereq', 'side');
+		
+		echo '<div class="wrap">';
+		if($formId > 0) {
+			echo '<h2>Redigera formulär</h2>';
+			echo '<form action="?page='.$_GET['page'].'&action=edit&form='.$formId.'" method="post">';
+			$data = $wpdb->get_results("SELECT id,tag,description,type FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " ORDER BY order_in_form",ARRAY_A);
+			//Pass the elements to be printed by jQuery
+			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
+			$prevForm = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
+			if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
+		} else {
+			$prevForm = object();
+			echo '<h2>Nytt formulär</h2>';
+			echo '<form action="?page='.$_GET['page'].'&action=save_new" method="post">';
+		}
+		wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
         wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
 		echo '
 			<div id="poststuff">
@@ -26,7 +30,7 @@ class GasqueregAdmin {
 						<div id="titlediv">
 							<div id="titlewrap">
 								<label id="title-prompt-text" class="screen-reader-text" for="title">Formulärtitel</label>
-								<input id="title" type="text" autocomplete="off" value="'.$title.'" size="30" name="title">
+								<input id="title" type="text" autocomplete="off" value="'.$prevForm->title.'" size="30" name="title" placeholder="Formulärtitel">
 							</div>
 						</div>
 						<ul id="listOfFormElements"></ul>
@@ -34,39 +38,17 @@ class GasqueregAdmin {
 						<input type="submit" name="saveForm" id="saveButton" value="Spara" class="button">
 					</div>
 					<div id="postbox-container-1" class="postbox-container">';
-		do_meta_boxes('gasquereq','side',null);
+		do_meta_boxes('gasquereq','side',$prevForm);
 		echo '			</div>
-	 
 					<div id="postbox-container-2" class="postbox-container">';
-		do_meta_boxes('gasquereq','normal',null);
-		do_meta_boxes('gasquereq','advanced',null);
+		do_meta_boxes('gasquereq','normal',$prevForm);
+		do_meta_boxes('gasquereq','advanced',$prevForm);
 		echo '			</div>
 				</div>
 			</div>
 		</form>
 		</div>';
 		//do_action('object_edit_ui_rs');
-		//
-		//do_meta_boxes('gasquereg','advanced',null);
-	}
-	function printNewForm() {
-		global $wpdb;
-		
-		//Pass no elements (an empty array()) to be printed by jQuery
-		wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => array()) );
-		echo '
-		<div class="wrap"><h1>Skapa ett nytt formulär</h1>
-		<form action="?page='.$_GET['page'].'&action=save_new" method="post">
-			<div id="titlediv">
-				<div id="titlewrap">
-					<label id="title-prompt-text" class="screen-reader-text" for="title">Formulärtitel</label>
-					<input id="title" type="text" autocomplete="off" size="30" name="title" placeholder="Formulärtitel">
-				</div>
-			</div>
-			<ul id="listOfFormElements"></ul>
-			<button id="addButton" class="button">Nytt element</button>
-			<input type="submit" name="saveForm" id="saveButton" value="Spara" class="button">
-		</form></div>';
 	}
 	function saveForm() {
 		global $wpdb;
@@ -80,15 +62,24 @@ class GasqueregAdmin {
 		$formElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 		$current_user = wp_get_current_user();
 		
+		$fieldsToPost = array(
+					'title'=>$_POST['title'],
+					'requireLogedIn'=>isset($_POST['requireLogedIn']),
+					'maxNumberReplies'=>$_POST['maxNumberReplies'],
+					'maxNumberRepliesPerUser'=>$_POST['maxNumberRepliesPerUser'],
+					'allowEdit'=>isset($_POST['allowEdit'])
+					);
+		
 		if(isset($_GET['form'])) {
-			$wpdb->update($formsTableName,array('title'=>$_POST['title']),array('id'=>$_GET['form']));
+			$wpdb->update($formsTableName,$fieldsToPost,array('id'=>$_GET['form']));
 			/*if($wpdb->num_rows<1) {
 				echo '<p><em>Det har uppstått ett fel, kunde inte spara!</em></p>';
 				return;
 			}*/
 			$formId = (int)$_GET['form'];
 		} else {
-			$wpdb->insert($formsTableName,array('title'=>$_POST['title'],'createdBy'=>$current_user->ID));
+			$fieldsToPost['createdBy'] = $current_user->ID;
+			$wpdb->insert($formsTableName,$fieldsToPost);
 			$formId = $wpdb->insert_id;
 		}
 		$wpdb->delete($formElementsTableName,array('form'=>$formId));
@@ -133,8 +124,29 @@ class GasqueregAdmin {
 		echo '<p><em>'.$msg.'</em></p>';
 		return -1;
 	}
-	function options_meta_box(){
-		echo 'Hello world';
+	function options_meta_box($prevForm){
+		?>
+			<div class="misc-pub-section">
+				<input type="checkbox" name="requireLogedIn" id="requireLogedInCheckbox"<?php if($prevForm->requireLogedIn==1) echo' checked'; ?>>
+				<label for="requireLogedInCheckbox">Kräv inloggning för svar</label><br>
+			</div>
+			<div class="misc-pub-section">
+				<label for="maxNumberRepliesText">Max</label>
+				<input type="number" name="maxNumberReplies" id="maxNumberRepliesText" size="3" value="<?php echo ($prevForm->maxNumberReplies>0)?$prevForm->maxNumberReplies:''; ?>">
+				<label for="maxNumberRepliesText">svar totalt</label>
+			</div>
+			<div class="misc-pub-section">
+				<label for="maxNumberRepliesPerUserText">Max</label>
+				<input type="number" name="maxNumberRepliesPerUser" id="maxNumberRepliesPerUserText" size="3" value="<?php echo ($prevForm->maxNumberRepliesPerUser>0)?$prevForm->maxNumberRepliesPerUser:''; ?>">
+				<label for="maxNumberRepliesPerUserText">svar per användare</label>
+			</div>
+			<?php /*
+			<div class="misc-pub-section">
+				<input type="checkbox" name="allowEdit" id="allowEditCheckbox"<?php if($prevForm->allowEdit==1) echo' checked'; ?>>
+				<label for="allowEditCheckbox">Låt användare ändra sina svar</label><br>
+			</div>
+			*/ ?>
+		<?php
 	}
 }
 ?>

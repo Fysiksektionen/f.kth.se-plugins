@@ -17,8 +17,8 @@ function gasquereg_menu_page() {
 			}
 			if(!empty($gasqueregAdmin->$error_message)) echo '<p><em>'.$gasqueregAdmin->error_message.'</em></p>';
 			if($_GET['message'] == '1') echo '<div class="updated"><p>Det nya formuläret har sparats!</p></div>';
-			if(isset($_GET['form'])) $gasqueregAdmin->printExistingForm((int)$_GET['form']);
-			else $gasqueregAdmin->printNewForm();
+			if(isset($_GET['form'])) $gasqueregAdmin->editPage((int)$_GET['form']);
+			else $gasqueregAdmin->editPage();
 			break;
 		case 'answers':
 			$gasqueregAdmin->showAnswers();
@@ -58,12 +58,11 @@ function gasquereg_enqueue_scripts($hook) {
 	wp_enqueue_script('jquery-ui-sortable');
 	wp_enqueue_script('jquery-ui-widget');
 	wp_enqueue_style('jquery-ui-default-theme', 'http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css');
-	
+	wp_enqueue_script('postbox');
     wp_enqueue_script( 'gasqueRegCreateFormJS', plugins_url('createForm.js', __FILE__),array(),false,true);
 	
 	wp_enqueue_style('gasqueRegCreateFormCSS', plugins_url('createForm.css', __FILE__));
 }
-
 add_action( 'admin_menu', 'gasquereg_add_admin_menu' );
 add_action('wp_loaded','gasquereg_admin_redirect');
 add_action( 'admin_enqueue_scripts', 'gasquereg_enqueue_scripts' );

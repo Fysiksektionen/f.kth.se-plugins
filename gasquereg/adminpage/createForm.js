@@ -32,4 +32,5 @@ jQuery(document).ready(function() {
 	 } else {
 		addFormElement();//Add a default element
 	}
+	postboxes.add_postbox_toggles(pagenow);
  });

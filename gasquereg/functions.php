@@ -10,13 +10,38 @@ function gasquereg_submit_answer($formId) {
 	$formsElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 	$answersTableName = $wpdb->prefix.'gasquereg_answers';
 	$answerElementsTableName = $wpdb->prefix.'gasquereg_answer_elements';
-	if($wpdb->get_var('SELECT COUNT(id) FROM '.$formsTableName.' WHERE id = '.$formId) <= 0) {
+	$formOptions = $wpdb->get_row('SELECT * FROM '.$formsTableName.' WHERE id = '.$formId);
+	if($wpdb->num_rows <= 0) {
 		echo '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
 		return;
 	}
 	$elements = $wpdb->get_results('SELECT id FROM '.$formsElementsTableName.' WHERE form = '.$formId);
 	
-	//Check that everything is OK
+	//---Check that everything is OK---
+	//Check max number of responses, $formOptions->maxNumberReplies == 0 means no limit
+	if($formOptions->maxNumberReplies > 0) {
+		$num_responses = $wpdb->get_var('SELECT COUNT(*) FROM '.$answersTableName.' WHERE form = '.(int)$formId);
+		if($num_responses >= $formOptions->maxNumberReplies) {
+			echo '<p><em>Formuläret kan tyvärr inte ta emot fler svar.</em></p>';
+			return;
+		}
+	}
+	//Check max number of responses, $formOptions->maxNumberReplies == 0 means no limit
+	if($formOptions->requireLogedIn) {
+		if(!is_user_logged_in()) {
+			echo '<p><em>Du måste vara inloggad för att kunna svara på detta formulär.</em></p>';
+			return;
+		}
+	}
+	//Check max number of responses per user, and only if the user is logged in
+	if($formOptions->maxNumberRepliesPerUser > 0 && is_user_logged_in()) {
+		$num_responses_from_user = $wpdb->get_var('SELECT COUNT(*) FROM '.$answersTableName.' WHERE form = '.(int)$formId).' AND user = '.$current_user->ID;
+		if($num_responses_from_user >= $formOptions->maxNumberRepliesPerUser) {
+			echo '<p><em>Formuläret kan tyvärr inte ta emot fler svar från dig.</em></p>';
+			return;
+		}
+	}
+	
 	foreach($elements as $element) {
 		$name = 'form_elem'.$element->id;
 		if(!isset($_POST[$name]) || empty($_POST[$name])) {
