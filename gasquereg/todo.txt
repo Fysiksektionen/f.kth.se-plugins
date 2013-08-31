@@ -28,3 +28,10 @@ To-do Features:
 *Install script
 	-Manage tables with dbDiff (or what was it called?)
 *Implement nonces to assure forms are properly submitted
+
+Förslag från fkm*:
+	*Distinktion (fest, jobb, tröjor, etc) mellan typ av saker
+	*Vem har anmält sig (kth-id)
+	*Templates
+	*Export
+	*Gömda fält (betalning etc)
