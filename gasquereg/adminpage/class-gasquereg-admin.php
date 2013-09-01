@@ -11,7 +11,10 @@ class GasqueregAdmin {
 		if($formId > 0) {
 			echo '<h2>Redigera formulär</h2>';
 			echo '<form action="?page='.$_GET['page'].'&action=edit&form='.$formId.'" method="post">';
-			if($wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId) < 1) return $this->error('Kunde inte hitta formuläret');
+			if($wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId) < 1)
+				return $this->error('Kunde inte hitta formuläret');
+			if($wpdb->get_var("SELECT createdBy FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId) != $current_user->ID && !is_admin())
+				return $this->error('Du har inte behörighet att redigera detta formulär.');
 			$data = $wpdb->get_results("SELECT id,tag,description,type FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " ORDER BY order_in_form",ARRAY_A);
 			//Pass the elements to be printed by jQuery
 			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
@@ -109,13 +112,17 @@ class GasqueregAdmin {
 		$list = new Table_Of_Answers();
 		$formId = (int)$_GET['form'];
 		//Fetch, prepare, sort, and filter our data...
-		$title = $wpdb->get_var("SELECT title FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
-		if($wpdb->num_rows <= 0) {
+		$attr = $wpdb->get_row("SELECT title,createdBy FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
+		/*if($wpdb->num_rows <= 0) {
 			echo '<p><em>Ett fel har uppstått, kunde inte hitta formuläret.</em></p>';
+			return;
+		}*/
+		if($attr->createdBy != $current_user->ID && !is_admin()) {
+			echo '<p><em>Du verkar inte ha behörighet att se svaren till detta formulär.</em></p>';
 			return;
 		}
 		$list->prepare_items();
-		echo '<div class="wrap"><h2>'.$title.'</h2><h3>Inkommna svar</h3>';
+		echo '<div class="wrap"><h2>'.$attr->title.'</h2><h3>Inkommna svar</h3>';
 		echo '<form id="gasquereg-forms-filter" method="get">';
 		echo '<input type="hidden" name="page" value="'.$_REQUEST['page'].'" />';
 		$list->display();

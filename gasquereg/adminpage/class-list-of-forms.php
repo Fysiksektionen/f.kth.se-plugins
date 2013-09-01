@@ -98,7 +98,7 @@ class List_Of_Forms extends WP_List_Table {
     function prepare_items() {
         global $wpdb;
 		
-        $per_page = 10;
+        $per_page = 15;
         
         $columns = $this->get_columns();
         $hidden = array();
@@ -124,10 +124,12 @@ class List_Of_Forms extends WP_List_Table {
 							$formsTableName.'.createdTime AS date,'.
 							$wpdb->users.'.display_name AS author, '.
 							'COUNT('.$answersTableName.'.id) AS num_ans '.
-							'FROM '.$wpdb->users.', '.$formsTableName.' '.
+							'FROM '.$formsTableName.' '.
 							'LEFT JOIN '.$answersTableName.' ON '.$answersTableName.'.form = '.$formsTableName.'.id '.
-							'WHERE '.$formsTableName.'.createdBy = '.$wpdb->users.'.ID '.
-							'GROUP BY '.$formsTableName.'.id '.
+							'LEFT JOIN '.$wpdb->users.' ON '.$formsTableName.'.createdBy = '.$wpdb->users.'.ID ';
+		if(!is_admin())
+			$query .=		'WHERE '.$formsTableName.'.createdBy = '.$current_user->ID;
+		$query .=			'GROUP BY '.$formsTableName.'.id '.
 							'ORDER BY '.$orderby;
 		if($_REQUEST['order'] == 'desc') $query .= ' DESC';
 		$query .= sprintf(' LIMIT %d,%d',($current_page-1)*$per_page,$per_page);

@@ -4,8 +4,8 @@ To-do Features:
 *Search forms
 *Search answers
 *Form options
-	-Must be logged in?
-	-Number of replies/user
+	-Must be logged in?			CHECK
+	-Number of replies/user		CHECK
 	-Opens/closes/expires
 	-Possible to change answer?
 *Element options
@@ -21,13 +21,14 @@ To-do Features:
 	-Selection dropdown menus
 	-All of HTML5 special types (email, telephone, url, date, time, datetime etc)
 *Slug for printing answers in posts
-	-Flags?
+	-Flags?					PARTIAL CHECK
 *Integrate with Role Manager
 *Improve general layout of form
 	-Maybe more options?
 *Install script
-	-Manage tables with dbDiff (or what was it called?)
+	-Manage tables with dbDiff (or what was it called?)	CHECK
 *Implement nonces to assure forms are properly submitted
+*Help texts
 
 Förslag från fkm*:
 	*Distinktion (fest, jobb, tröjor, etc) mellan typ av saker
