@@ -11,13 +11,15 @@ class GasqueregAdmin {
 		if($formId > 0) {
 			echo '<h2>Redigera formulär</h2>';
 			echo '<form action="?page='.$_GET['page'].'&action=edit&form='.$formId.'" method="post">';
+			if($wpdb->get_var("SELECT COUNT(*) FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId) < 1) return $this->error('Kunde inte hitta formuläret');
 			$data = $wpdb->get_results("SELECT id,tag,description,type FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " ORDER BY order_in_form",ARRAY_A);
 			//Pass the elements to be printed by jQuery
 			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
 			$prevForm = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
-			if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
+			//if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
 		} else {
-			$prevForm = object();
+			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => '') );
+			$prevForm = (object) array('title' => '');
 			echo '<h2>Nytt formulär</h2>';
 			echo '<form action="?page='.$_GET['page'].'&action=save_new" method="post">';
 		}
