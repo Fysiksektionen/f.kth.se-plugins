@@ -74,6 +74,6 @@ add_filter( 'define_data_sources_rs', 'rs_gasquereg_data_sources' );
 add_filter( 'define_capabilities_rs', 'rs_gasquereg_capabilities' );
 add_filter( 'define_roles_rs', 'rs_gasquereg_roles' );
 add_filter( 'define_role_caps_rs', 'rs_gasquereg_role_caps' );
-error_log('Gasquereg filters and hooks added');
+//error_log('Gasquereg filters and hooks added');
 //add_filter( 'default_otype_options_rs', 'rs_gasquereg_default_otype_options' );
 ?>

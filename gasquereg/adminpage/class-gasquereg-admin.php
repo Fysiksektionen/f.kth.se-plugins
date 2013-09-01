@@ -80,10 +80,10 @@ class GasqueregAdmin {
 		
 		if(isset($_GET['form'])) {
 			$wpdb->update($formsTableName,$fieldsToPost,array('id'=>$_GET['form']));
-			/*if($wpdb->num_rows<1) {
+			if($wpdb->num_rows<1) {
 				echo '<p><em>Det har uppstått ett fel, kunde inte spara!</em></p>';
 				return;
-			}*/
+			}
 			$formId = (int)$_GET['form'];
 		} else {
 			$fieldsToPost['createdBy'] = $current_user->ID;

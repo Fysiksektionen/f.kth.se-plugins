@@ -71,10 +71,10 @@ function gasquereg_print_form($formId) {
 	$formsElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 	$query = 'SELECT title,id FROM '.$formsTableName.' WHERE id='.$formId;
 	$formData = $wpdb->get_row($query);
-	/*if($wpdb->num_rows <= 0) {
+	if($wpdb->num_rows <= 0) {
 		echo '<p><em>Kunde inte hitta detta formulär.</em></p>';
 		return;
-	}*/
+	}
 	$elements = $wpdb->get_results('SELECT id,description,type,tag FROM '.$formsElementsTableName.' WHERE form = '.$formId.' ORDER BY order_in_form');
 	echo '<form class="gasquereg_form" method="post">';
 	echo '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
