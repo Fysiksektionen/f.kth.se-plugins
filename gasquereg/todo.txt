@@ -31,7 +31,7 @@ To-do Features:
 *Help texts
 
 Förslag från fkm*:
-	*Distinktion (fest, jobb, tröjor, etc) mellan typ av saker
+	*Distinktion (fest, jobb, tröjor, etc) mellan typ av saker	CHECK
 	*Vem har anmält sig (kth-id)
 	*Templates
 	*Export

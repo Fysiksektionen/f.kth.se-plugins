@@ -12,6 +12,7 @@ function gasquereg_install_db() {
 	  maxNumberReplies int(11) NOT NULL,
 	  maxNumberRepliesPerUser int(11) NOT NULL,
 	  allowEdit tinyint(1) NOT NULL DEFAULT '1',
+	  category text NOT NULL,
 	  PRIMARY KEY  (id)
 	);");
 	dbDelta("CREATE TABLE ".$wpdb->prefix."gasquereg_form_elements (

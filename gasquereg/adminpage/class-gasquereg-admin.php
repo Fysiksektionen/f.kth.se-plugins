@@ -5,7 +5,9 @@ class GasqueregAdmin {
 	public $error_message = "";
 	function editPage($formId = -1) {
 		global $wpdb;
-		add_meta_box("gasquereg", "Alternativ", array( &$this, 'options_meta_box' ), 'gasquereq', 'side');
+		add_meta_box("gasquereg_options", "Alternativ", array( &$this, 'options_meta_box' ), 'gasquereq', 'side');
+		add_meta_box("gasquereg_category", "Kategori", array( &$this, 'category_meta_box' ), 'gasquereq', 'side');
+		
 		
 		echo '<div class="wrap">';
 		if($formId > 0) {
@@ -72,7 +74,8 @@ class GasqueregAdmin {
 					'requireLogedIn'=>isset($_POST['requireLogedIn']),
 					'maxNumberReplies'=>$_POST['maxNumberReplies'],
 					'maxNumberRepliesPerUser'=>$_POST['maxNumberRepliesPerUser'],
-					'allowEdit'=>isset($_POST['allowEdit'])
+					'allowEdit'=>isset($_POST['allowEdit']),
+					'category'=>$_POST['category']
 					);
 		
 		if(isset($_GET['form'])) {
@@ -156,6 +159,18 @@ class GasqueregAdmin {
 			</div>
 			*/ ?>
 		<?php
+	}
+	function category_meta_box($prevForm){
+		echo '<p>För framtida statistik kan en kategori användas:</p>';
+		echo '<select name="category" id="categorySelect">';
+		$categories = array('Fest','Jobb','Kläder','Undersökning','Övrigt');
+		echo '<option value=""><em>Ingen</em></option>';
+		foreach($categories as $cat) {
+			echo '<option value="'.$cat.'"';
+			if($cat == $prevForm->category) echo ' selected';
+			echo '>'.$cat.'</option>';
+		}
+		echo '</select>';
 	}
 }
 ?>
