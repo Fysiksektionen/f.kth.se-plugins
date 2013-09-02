@@ -88,7 +88,7 @@ class ZetaMultipleLogin {
       //Make sure user is member of current site
 			if (!get_usermeta( $wp_user->ID, 'wp_'.$blog_id.'_capabilities')) {
 				if (function_exists('add_user_to_blog')) {
-					add_user_to_blog($blog_id, $wp_user->ID, $this->options['default_userrole']);
+					add_user_to_blog($blog_id, $wp_user->ID, $this->options['defaultrole']);
 				} else {
 					die( __( 'Could not add user to site.', 'ZetaMultipleLogin' ));
 				}
