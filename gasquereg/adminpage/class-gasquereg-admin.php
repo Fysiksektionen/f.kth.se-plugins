@@ -68,7 +68,7 @@ class GasqueregAdmin {
 		$formsTableName = $wpdb->prefix.'gasquereg_forms';
 		$formElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 		$current_user = wp_get_current_user();
-		
+		echo $formsTableName.' '.$formElementsTableName;
 		$fieldsToPost = array(
 					'title'=>$_POST['title'],
 					'requireLogedIn'=>isset($_POST['requireLogedIn']),
@@ -87,8 +87,11 @@ class GasqueregAdmin {
 			$formId = (int)$_GET['form'];
 		} else {
 			$fieldsToPost['createdBy'] = $current_user->ID;
+			echo '<p>Inserting into table...</p>';
 			$wpdb->insert($formsTableName,$fieldsToPost);
+			echo '<p>Done inserting into table.';
 			$formId = $wpdb->insert_id;
+			echo '<p>New id is'.$formId.'</p>';
 		}
 		$wpdb->delete($formElementsTableName,array('form'=>$formId));
 		for($i=0;$i<$numberOfFormElements;$i++) {
