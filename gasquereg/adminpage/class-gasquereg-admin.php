@@ -90,7 +90,7 @@ class GasqueregAdmin {
 			echo '<p>Inserting into table...</p>';
 			$wpdb->insert($formsTableName,$fieldsToPost);
 			echo '<p>Done inserting into table.';
-			echo '<p>Last error: <tt>'.$wpdb->$last_error.'</tt></p>';
+			echo '<p>Last error: <tt>'.$wpdb->last_error.'</tt></p>';
 			$formId = $wpdb->insert_id;
 			echo '<p>New id is'.$formId.'</p>';
 		}
