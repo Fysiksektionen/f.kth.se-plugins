@@ -75,23 +75,26 @@ class ZetaMultipleLogin {
 			$user_ldap_data = $this->get_ldap_user($user_cas_id);
 			$userdata = $user_ldap_data->get_user_data();
       
-			if( $wp_user = get_user_by('login', $userdata['user_login'])) { // User has a WP account.
-				
-        //Make sure user is member of current site
-				if (!get_usermeta( $wp_user->ID, 'wp_'.$blog_id.'_capabilities')) {
-					if (function_exists('add_user_to_blog')) { add_user_to_blog($blog_id, $wp_user->ID, $this->options['default_userrole']); }
-				}
-		
-				$user_id = $wp_user->ID;
-			} else { // User does not has a WP account.
+			if(!($wp_user = get_user_by('login', $userdata['user_login']))) { // User does not has a WP account.
 				if ($this->options['ldap_adduser']) {
 					$user_id = $this->no_wp_user($user_cas_id, $user_ldap_data);
+					$wp_user = get_user_by('id', $user_id);
         } else {
           die( __( 'You do not have permission here', 'ZetaMultipleLogin' ));
         }
+			} //Past here, we have $wp_user
+			
+			
+      //Make sure user is member of current site
+			if (!get_usermeta( $wp_user->ID, 'wp_'.$blog_id.'_capabilities')) {
+				if (function_exists('add_user_to_blog')) {
+					add_user_to_blog($blog_id, $wp_user->ID, $this->options['defaultrole']);
+				} else {
+					die( __( 'Could not add user to site.', 'ZetaMultipleLogin' ));
+				}
 			}
       
-      wp_set_auth_cookie($user_id);
+      wp_set_auth_cookie($wp_user->ID);
     } else {
       phpCAS::forceAuthentication();
     }
@@ -213,6 +216,13 @@ class ZetaMultipleLogin {
   public function ConfigureCAS() {
     $this->cas_valid = true;
     
+		if(substr($this->options['cas_path'], 0, 1) === '/') {
+			$this->options['cas_path'] = substr($this->options['cas_path'], 1);
+			if($this->options['cas_path'] === false) {
+				$this->options['cas_path'] = '';
+			}
+		}
+		
     phpCAS::client($this->options['cas_version'], 
       $this->options['cas_host'], 
       intval($this->options['cas_port']), 
