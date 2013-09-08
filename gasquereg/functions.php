@@ -1,8 +1,8 @@
 <?php
 function gasquereg_form_shortcode($atts) {
 	$formId = (int)$atts['id'];
-	if(isset($_POST['form_id']) && (int)$_POST['form_id']==(int)$atts['id']) gasquereg_submit_answer($formId);
-	else gasquereg_print_form($formId);
+	if(isset($_POST['form_id']) && (int)$_POST['form_id']==(int)$atts['id']) return gasquereg_submit_answer($formId);
+	else return gasquereg_print_form($formId);
 }
 function gasquereg_submit_answer($formId) {
 	global $wpdb;
@@ -12,8 +12,7 @@ function gasquereg_submit_answer($formId) {
 	$answerElementsTableName = $wpdb->prefix.'gasquereg_answer_elements';
 	$formOptions = $wpdb->get_row('SELECT * FROM '.$formsTableName.' WHERE id = '.$formId);
 	if($wpdb->num_rows <= 0) {
-		echo '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
-		return;
+		return '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
 	}
 	$elements = $wpdb->get_results('SELECT id FROM '.$formsElementsTableName.' WHERE form = '.$formId);
 	
@@ -22,31 +21,27 @@ function gasquereg_submit_answer($formId) {
 	if($formOptions->maxNumberReplies > 0) {
 		$num_responses = $wpdb->get_var('SELECT COUNT(*) FROM '.$answersTableName.' WHERE form = '.(int)$formId);
 		if($num_responses >= $formOptions->maxNumberReplies) {
-			echo '<p><em>Formuläret kan tyvärr inte ta emot fler svar.</em></p>';
-			return;
+			return '<p><em>Formuläret kan tyvärr inte ta emot fler svar.</em></p>';
 		}
 	}
 	//Check max number of responses, $formOptions->maxNumberReplies == 0 means no limit
 	if($formOptions->requireLogedIn) {
 		if(!is_user_logged_in()) {
-			echo '<p><em>Du måste vara inloggad för att kunna svara på detta formulär.</em></p>';
-			return;
+			return '<p><em>Du måste vara inloggad för att kunna svara på detta formulär.</em></p>';
 		}
 	}
 	//Check max number of responses per user, and only if the user is logged in
 	if($formOptions->maxNumberRepliesPerUser > 0 && is_user_logged_in()) {
 		$num_responses_from_user = $wpdb->get_var('SELECT COUNT(*) FROM '.$answersTableName.' WHERE form = '.(int)$formId).' AND user = '.$current_user->ID;
 		if($num_responses_from_user >= $formOptions->maxNumberRepliesPerUser) {
-			echo '<p><em>Formuläret kan tyvärr inte ta emot fler svar från dig.</em></p>';
-			return;
+			return '<p><em>Formuläret kan tyvärr inte ta emot fler svar från dig.</em></p>';
 		}
 	}
 	
 	foreach($elements as $element) {
 		$name = 'form_elem'.$element->id;
 		if(!isset($_POST[$name]) || empty($_POST[$name])) {
-			echo '<p><em>Vänligen fyll i svar i samtliga rutor.</em></p>';
-			return;
+			return '<p><em>Vänligen fyll i svar i samtliga rutor.</em></p>';
 		}
 	}
 	
@@ -63,7 +58,7 @@ function gasquereg_submit_answer($formId) {
 			'val' => $_POST[$name] //Should be raw according to WP Codex
 		));
 	}
-	echo '<p>Tack för ditt svar!</p>';
+	return '<p>Tack för ditt svar!</p>';
 }
 function gasquereg_print_form($formId) {
 	global $wpdb;
@@ -72,24 +67,25 @@ function gasquereg_print_form($formId) {
 	$query = 'SELECT title,id FROM '.$formsTableName.' WHERE id='.$formId;
 	$formData = $wpdb->get_row($query);
 	if($wpdb->num_rows <= 0) {
-		echo '<p><em>Kunde inte hitta detta formulär.</em></p>';
-		return;
+		return '<p><em>Kunde inte hitta detta formulär.</em></p>';
+		//return;
 	}
 	$elements = $wpdb->get_results('SELECT id,description,type,tag FROM '.$formsElementsTableName.' WHERE form = '.$formId.' ORDER BY order_in_form');
-	echo '<form class="gasquereg_form" method="post">';
-	echo '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
-	echo '<input type="hidden" name="form_id" value="'.$formId.'">';
+	$formHtml = '<form class="gasquereg_form" method="post">';
+	$formHtml .= '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
+	$formHtml .= '<input type="hidden" name="form_id" value="'.$formId.'">';
 	foreach($elements as $element) {
 		$name = 'form_elem'.$element->id;
-		echo '<div class="gasquereg_element_wrapper"><label for="'.$name.'">'.$element->description.'</label><br>';
+		$formHtml .= '<div class="gasquereg_element_wrapper"><label for="'.$name.'">'.$element->description.'</label><br>';
 		switch($element->type) {
 			case 'text':
-				echo '<input type="text" size="30" id="'.$name.'" name="'.$name.'" value="'.$_POST[$name].'"></div>';
+				$formHtml .= '<input type="text" size="30" id="'.$name.'" name="'.$name.'" value="'.$_POST[$name].'"></div>';
 				break;
 		}
 	}
-	echo '<div class="gasquereg_submit_wrapper"><input type="submit" value="Skicka" class="gasquereg_submit button"></div>';
-	echo '</form>';	
+	$formHtml .= '<div class="gasquereg_submit_wrapper"><input type="submit" value="Skicka" class="gasquereg_submit button"></div>';
+	$formHtml .= '</form>';
+	return $formHtml;
 }	
 function gasquereg_queue_CSS() {
 	wp_enqueue_style('gasquereg', plugins_url('gasquereg.css', __FILE__));
@@ -127,16 +123,17 @@ function gasquereg_answers_shortcode($atts) {
 	global $wpdb;
 	$formId = (int)$atts['id'];
 	$cols = $wpdb->get_results('SELECT id,description FROM '.$wpdb->prefix.'gasquereg_form_elements WHERE form = '.$formId.' ORDER BY order_in_form');
-	echo '<table class="gasquereg_answers_table"><thead><tr>';
-	foreach($cols as $col) echo '<td>'.$col->description.'</td>';
-	echo '</tr></thead><tbody>';
+	$tableHtml = '<table class="gasquereg_answers_table"><thead><tr>';
+	foreach($cols as $col) $tableHtml .= '<td>'.$col->description.'</td>';
+	$tableHtml .= '</tr></thead><tbody>';
 	$data = queryAndPivotData($formId);
 	//print_R($data);
 	foreach($data as $row) {
-		echo '<tr>';
-		foreach($cols as $col) echo '<td>'.$row['form_elem'.$col->id].'</td>';
-		echo '</tr>';
+		$tableHtml .= '<tr>';
+		foreach($cols as $col) $tableHtml .= '<td>'.$row['form_elem'.$col->id].'</td>';
+		$tableHtml .= '</tr>';
 	}
-	echo '</tbody></table>';
+	$tableHtml .= '</tbody></table>';
+	return $tableHtml;
 }
 ?>

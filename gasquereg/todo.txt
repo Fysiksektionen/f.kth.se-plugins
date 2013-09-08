@@ -23,6 +23,7 @@ To-do Features:
 *Slug for printing answers in posts
 	-Flags?					PARTIAL CHECK
 *Integrate with Role Manager
+	-Or at least let forms be assigned to categories, see the ths-add plugin
 *Improve general layout of form
 	-Maybe more options?
 *Install script
