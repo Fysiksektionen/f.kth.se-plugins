@@ -32,7 +32,9 @@ class Table_Of_Answers extends WP_List_Table {
     }
 	function get_columns(){
         $columns = array();
-		foreach($this->elements as $element) $columns['form_elem'.$element->id] = $element-> description;
+		foreach($this->elements as $element) {
+			$columns['form_elem'.$element->id] = explode(';',$element-> description)[0];
+		}
 		$columns['date'] = "Svarsdatum";
         return $columns;
     }
@@ -88,7 +90,7 @@ class Table_Of_Answers extends WP_List_Table {
         global $wpdb;
 		
 		$this->formId = (int)$_GET['form'];
-		$this->elements = $wpdb->get_results('SELECT id,description FROM '.$wpdb->prefix.'gasquereg_form_elements WHERE form = '.$this->formId.' ORDER BY order_in_form');
+		$this->elements = $wpdb->get_results('SELECT id,description,type FROM '.$wpdb->prefix.'gasquereg_form_elements WHERE form = '.$this->formId.' ORDER BY order_in_form');
 		
         $per_page = 20;
         
