@@ -11,9 +11,9 @@ function gasquereg_submit_answer($formId) {
 	$answersTableName = $wpdb->prefix.'gasquereg_answers';
 	$answerElementsTableName = $wpdb->prefix.'gasquereg_answer_elements';
 	$formOptions = $wpdb->get_row('SELECT * FROM '.$formsTableName.' WHERE id = '.$formId);
-	/*if($wpdb->num_rows <= 0) {
+	if($wpdb->num_rows <= 0) {
 		return '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
-	}*/
+	}
 	$elements = $wpdb->get_results('SELECT id,type FROM '.$formsElementsTableName.' WHERE form = '.$formId);
 	
 	//---Check that everything is OK---
@@ -75,10 +75,10 @@ function gasquereg_print_form($formId) {
 	$formsElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 	$query = 'SELECT title,id FROM '.$formsTableName.' WHERE id='.$formId;
 	$formData = $wpdb->get_row($query);
-	/*if($wpdb->num_rows <= 0) {
+	if($wpdb->num_rows <= 0) {
 		return '<p><em>Kunde inte hitta detta formulär.</em></p>';
 		//return;
-	}*/
+	}
 	$elements = $wpdb->get_results('SELECT id,description,type,tag FROM '.$formsElementsTableName.' WHERE form = '.$formId.' ORDER BY order_in_form');
 	$formHtml = '<form class="gasquereg_form" method="post">';
 	$formHtml .= '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
