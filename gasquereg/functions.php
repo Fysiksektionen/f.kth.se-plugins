@@ -11,10 +11,10 @@ function gasquereg_submit_answer($formId) {
 	$answersTableName = $wpdb->prefix.'gasquereg_answers';
 	$answerElementsTableName = $wpdb->prefix.'gasquereg_answer_elements';
 	$formOptions = $wpdb->get_row('SELECT * FROM '.$formsTableName.' WHERE id = '.$formId);
-	if($wpdb->num_rows <= 0) {
+	/*if($wpdb->num_rows <= 0) {
 		return '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
-	}
-	$elements = $wpdb->get_results('SELECT id FROM '.$formsElementsTableName.' WHERE form = '.$formId);
+	}*/
+	$elements = $wpdb->get_results('SELECT id,type FROM '.$formsElementsTableName.' WHERE form = '.$formId);
 	
 	//---Check that everything is OK---
 	//Check max number of responses, $formOptions->maxNumberReplies == 0 means no limit
@@ -39,9 +39,18 @@ function gasquereg_submit_answer($formId) {
 	}
 	
 	foreach($elements as $element) {
-		$name = 'form_elem'.$element->id;
-		if(!isset($_POST[$name]) || empty($_POST[$name])) {
-			return '<p><em>Vänligen fyll i svar i samtliga rutor.</em></p>';
+		if($element->type == "text") {
+			$name = 'form_elem'.$element->id;
+			if(!isset($_POST[$name]) || empty($_POST[$name])) {
+				return '<p><em>Vänligen fyll i svar i samtliga rutor.</em></p>';
+			}
+		} else if($element->type == "textifcheck") {
+			if(isset($_POST['form_checkelem'.$element->id])) {
+				$name = 'form_elem'.$element->id;
+				if(!isset($_POST[$name]) || empty($_POST[$name])) {
+					return '<p><em>Vänligen fyll specifikation av alla dina kryssvar.</em></p>';
+				}
+			}
 		}
 	}
 	
@@ -66,20 +75,26 @@ function gasquereg_print_form($formId) {
 	$formsElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 	$query = 'SELECT title,id FROM '.$formsTableName.' WHERE id='.$formId;
 	$formData = $wpdb->get_row($query);
-	if($wpdb->num_rows <= 0) {
+	/*if($wpdb->num_rows <= 0) {
 		return '<p><em>Kunde inte hitta detta formulär.</em></p>';
 		//return;
-	}
+	}*/
 	$elements = $wpdb->get_results('SELECT id,description,type,tag FROM '.$formsElementsTableName.' WHERE form = '.$formId.' ORDER BY order_in_form');
 	$formHtml = '<form class="gasquereg_form" method="post">';
 	$formHtml .= '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
 	$formHtml .= '<input type="hidden" name="form_id" value="'.$formId.'">';
 	foreach($elements as $element) {
 		$name = 'form_elem'.$element->id;
-		$formHtml .= '<div class="gasquereg_element_wrapper"><label for="'.$name.'">'.$element->description.'</label><br>';
 		switch($element->type) {
 			case 'text':
+				$formHtml .= '<div class="gasquereg_element_wrapper"><label for="'.$name.'">'.$element->description.'</label><br>';
 				$formHtml .= '<input type="text" size="30" id="'.$name.'" name="'.$name.'" value="'.$_POST[$name].'"></div>';
+				break;
+			case 'textifcheck':
+				$descriptions = explode(';',$element->description);			
+				$formHtml .= '<div class="gasquereg_element_wrapper"><p><input type="checkbox" name="form_checkelem'.$element->id.'" id="form_checkelem'.$element->id.'" class="condTextSwitch">';
+				$formHtml .= '<label for="form_checkelem'.$element->id.'">'.$descriptions[0].'</label></p>';
+				$formHtml .= '<div class="condTextBox">'.$descriptions[1].'<br><textarea name="form_elem'.$element->id.'" style="width: 80%"></textarea></div></div>';
 				break;
 		}
 	}

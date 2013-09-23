@@ -15,4 +15,6 @@ add_shortcode('gasque_form','gasquereg_form_shortcode');
 add_shortcode('gasque_answers','gasquereg_answers_shortcode');
 add_action('wp_enqueue_scripts', 'gasquereg_queue_CSS', 100);
 register_activation_hook( __FILE__, 'gasquereg_install_db' );
+
+wp_enqueue_script( 'gasqueReg', plugins_url('gasquereg.js', __FILE__),array(),false,true);
 ?>

@@ -13,6 +13,7 @@ jQuery(document).ready(function() {
 				 '<label for="type-'+nextId+'">Typ</label>'+
 				 '<select id="type-'+nextId+'" name="type[]">'+
 					 '<option value="text" '+(type=="text"?" selected":"")+'>Text</option>'+
+					 '<option value="textifcheck" '+(type=="textifcheck"?" selected":"")+'>Villkorlig textruta</option>'+
 				 '</select>'+
 				 '<input type="hidden" name="elemId[]" value="'+elemId+'">'+
 			 '</li>';
