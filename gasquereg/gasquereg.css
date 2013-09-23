@@ -1,5 +1,5 @@
 .gasquereg_form {
-	 width: 80%;
+	 width: 90%;
 	 margin: auto; /*Centers the form on the page*/
 	 padding: 0.6em;
 	 border: solid thin #CCC;
@@ -18,9 +18,12 @@
 .gasquereg_element_wrapper > input {
     width: 100%;
 }
+.gasquereg_element_wrapper > textarea {
+    width: 100%;
+}
 .gasquereg_answers_table {
 	border-collapse: collapse;
-	width: 90%;
+	width: 100%;
 	margin: auto;
 }
 .gasquereg_answers_table thead {
@@ -28,7 +31,7 @@
 }
 .gasquereg_answers_table td {
 	margin: 0;
-	padding: 0.1em;
+	padding: 0.2em;
 }
 .gasquereg_answers_table tr:nth-child(even) {
 	background-color: #EEE;

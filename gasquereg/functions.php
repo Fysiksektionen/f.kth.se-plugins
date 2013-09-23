@@ -139,7 +139,11 @@ function gasquereg_answers_shortcode($atts) {
 	$formId = (int)$atts['id'];
 	$cols = $wpdb->get_results('SELECT id,description FROM '.$wpdb->prefix.'gasquereg_form_elements WHERE form = '.$formId.' ORDER BY order_in_form');
 	$tableHtml = '<table class="gasquereg_answers_table"><thead><tr>';
-	foreach($cols as $col) $tableHtml .= '<td>'.$col->description.'</td>';
+	foreach($cols as $col) {
+		if(strlen($col->description) > 15) $colHead = substr($col->description,12).'...';
+		else $colHead = $col->description;
+		$tableHtml .= '<td>'.$colHead.'</td>';
+	}
 	$tableHtml .= '</tr></thead><tbody>';
 	$data = queryAndPivotData($formId);
 	//print_R($data);
