@@ -33,7 +33,8 @@ class Table_Of_Answers extends WP_List_Table {
 	function get_columns(){
         $columns = array();
 		foreach($this->elements as $element) {
-			$columns['form_elem'.$element->id] = explode(';',$element-> description)[0];
+			$descrSplit = explode(';',$element->description);
+			$columns['form_elem'.$element->id] = $descrSplit[0];
 		}
 		$columns['date'] = "Svarsdatum";
         return $columns;
