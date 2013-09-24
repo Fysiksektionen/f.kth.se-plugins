@@ -11,10 +11,10 @@ function gasquereg_submit_answer($formId) {
 	$answersTableName = $wpdb->prefix.'gasquereg_answers';
 	$answerElementsTableName = $wpdb->prefix.'gasquereg_answer_elements';
 	$formOptions = $wpdb->get_row('SELECT * FROM '.$formsTableName.' WHERE id = '.$formId);
-	if($wpdb->num_rows <= 0) {
+	/*if($wpdb->num_rows <= 0) {
 		return '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
-	}
-	$elements = $wpdb->get_results('SELECT id,type FROM '.$formsElementsTableName.' WHERE form = '.$formId);
+	}*/
+	$elements = $wpdb->get_results('SELECT id,type,description FROM '.$formsElementsTableName.' WHERE form = '.$formId);
 	
 	//---Check that everything is OK---
 	//Check max number of responses, $formOptions->maxNumberReplies == 0 means no limit
@@ -42,7 +42,9 @@ function gasquereg_submit_answer($formId) {
 		if($element->type == "text") {
 			$name = 'form_elem'.$element->id;
 			if(!isset($_POST[$name]) || empty($_POST[$name])) {
-				return '<p><em>Vänligen fyll i svar i samtliga rutor.</em></p>';
+				if($element->description != "Övrigt") {
+					return '<p><em>Vänligen fyll i svar i samtliga rutor.</em></p>';
+				}
 			}
 		} else if($element->type == "textifcheck") {
 			if(isset($_POST['form_checkelem'.$element->id])) {
@@ -75,10 +77,10 @@ function gasquereg_print_form($formId) {
 	$formsElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 	$query = 'SELECT title,id FROM '.$formsTableName.' WHERE id='.$formId;
 	$formData = $wpdb->get_row($query);
-	if($wpdb->num_rows <= 0) {
+	/*if($wpdb->num_rows <= 0) {
 		return '<p><em>Kunde inte hitta detta formulär.</em></p>';
 		//return;
-	}
+	}*/
 	$elements = $wpdb->get_results('SELECT id,description,type,tag FROM '.$formsElementsTableName.' WHERE form = '.$formId.' ORDER BY order_in_form');
 	$formHtml = '<form class="gasquereg_form" method="post">';
 	$formHtml .= '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
