@@ -11,9 +11,9 @@ function gasquereg_submit_answer($formId) {
 	$answersTableName = $wpdb->prefix.'gasquereg_answers';
 	$answerElementsTableName = $wpdb->prefix.'gasquereg_answer_elements';
 	$formOptions = $wpdb->get_row('SELECT * FROM '.$formsTableName.' WHERE id = '.$formId);
-	if($wpdb->num_rows <= 0) {
+	/*if($wpdb->num_rows <= 0) {
 		return '<p><em>Det har uppstått ett fel, kan inte längre hitta formuläret!</em></p>';
-	}
+	}*/
 	$elements = $wpdb->get_results('SELECT id,type,description,is_required,demand_unique FROM '.$formsElementsTableName.' WHERE form = '.$formId.' AND deleted=0');
 	
 	//---Check that everything is OK---
@@ -61,6 +61,12 @@ function gasquereg_submit_answer($formId) {
 			$numSame = $wpdb->get_var($sql);
 			if($numSame > 0) return '<p><em>Vi har redan tagit emot ett svar med snarlika uppgifter, har du fyllt i detta förut?</em></p>';
 		}
+		if($element->type == "textifcheck") {
+			$name = 'form_elem'.$element->id;
+			if(isset($_POST['form_checkelem'.$element->id])) {
+				$_POST[$name] = '<em>[checked]</em> '.$_POST[$name];
+			}
+		}
 	}
 	
 	
@@ -87,10 +93,10 @@ function gasquereg_print_form($formId) {
 	$formsElementsTableName = $wpdb->prefix.'gasquereg_form_elements';
 	$query = 'SELECT title,id FROM '.$formsTableName.' WHERE id='.$formId;
 	$formData = $wpdb->get_row($query);
-	if($wpdb->num_rows <= 0) {
+	/*if($wpdb->num_rows <= 0) {
 		return '<p><em>Kunde inte hitta detta formulär.</em></p>';
 		//return;
-	}
+	}*/
 	$elements = $wpdb->get_results('SELECT id,description,type,tag,is_required FROM '.$formsElementsTableName.' WHERE form = '.$formId.' AND deleted=0 ORDER BY order_in_form');
 	$formHtml = '<form class="gasquereg_form" method="post">';
 	$formHtml .= '<h2 class="gasquereg_title">'.$formData->title.'</h2>';
