@@ -20,6 +20,9 @@ function gasquereg_install_db() {
 	  description text NOT NULL,
 	  tag text NOT NULL,
 	  type text NOT NULL,
+	  is_required tinyint(1) NOT NULL DEFAULT '1',
+	  demand_unique tinyint(1) NOT NULL DEFAULT '0',
+	  deleted tinyint(1) NOT NULL DEFAULT '0',
 	  order_in_form int(11) NOT NULL DEFAULT '0',
 	  PRIMARY KEY  (id)
 	);");

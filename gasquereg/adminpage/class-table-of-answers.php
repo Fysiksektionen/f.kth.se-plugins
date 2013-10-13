@@ -91,7 +91,7 @@ class Table_Of_Answers extends WP_List_Table {
         global $wpdb;
 		
 		$this->formId = (int)$_GET['form'];
-		$this->elements = $wpdb->get_results('SELECT id,description,type FROM '.$wpdb->prefix.'gasquereg_form_elements WHERE form = '.$this->formId.' ORDER BY order_in_form');
+		$this->elements = $wpdb->get_results('SELECT id,description,type FROM '.$wpdb->prefix.'gasquereg_form_elements WHERE form = '.$this->formId.' AND deleted=0 ORDER BY order_in_form');
 		
         $per_page = 20;
         

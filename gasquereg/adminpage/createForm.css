@@ -10,3 +10,10 @@
   margin: 0.2em;
   width: 95%;
  }
+ .deleteButton {
+	float: right;
+    margin: 0.5em;
+ }
+ input[type="checkbox"] {
+	margin: 0 0.5em;
+ }

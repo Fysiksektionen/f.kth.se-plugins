@@ -3,7 +3,7 @@
 Plugin Name: Gasque-forumlär
 Plugin URI: http://f.kth.se
 Description: Formulärsystem för anmälan till gasquer och andra event.
-Version: 0.40
+Version: 0.60
 Author: Emil Wärnberg
 Author URI: http://f.kth.se/~emilwa
 License: Endast fysiksektionen

@@ -17,11 +17,11 @@ class GasqueregAdmin {
 				return $this->error('Kunde inte hitta formuläret');
 			if($wpdb->get_var("SELECT createdBy FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId) != $current_user->ID && !is_admin())
 				return $this->error('Du har inte behörighet att redigera detta formulär.');
-			$data = $wpdb->get_results("SELECT id,tag,description,type FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " ORDER BY order_in_form",ARRAY_A);
+			$data = $wpdb->get_results("SELECT id,tag,description,type,is_required,demand_unique FROM ".$wpdb->prefix."gasquereg_form_elements WHERE form = ".$formId. " AND deleted=0 ORDER BY order_in_form",ARRAY_A);
 			//Pass the elements to be printed by jQuery
 			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
 			$prevForm = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
-			//if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
+			if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
 		} else {
 			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => '') );
 			$prevForm = (object) array('title' => '');
@@ -79,10 +79,10 @@ class GasqueregAdmin {
 		
 		if(isset($_GET['form'])) {
 			$wpdb->update($formsTableName,$fieldsToPost,array('id'=>$_GET['form']));
-			/*if($wpdb->num_rows<1) {
+			if($wpdb->num_rows<1) {
 				echo '<p><em>Det har uppstått ett fel, kunde inte spara!</em></p>';
 				return;
-			}*/
+			}
 			$formId = (int)$_GET['form'];
 		} else {
 			$fieldsToPost['createdBy'] = $current_user->ID;
@@ -93,6 +93,15 @@ class GasqueregAdmin {
 		for($i=0;$i<$numberOfFormElements;$i++) {
 			$toInsert = array('form'=>$formId,'description'=>$_POST['descr'][$i],'tag'=>$_POST['tag'][$i],'type'=>$_POST['type'][$i],'order_in_form'=>$i);
 			if($_POST['elemId'][$i] > 0) $toInsert['id'] = $_POST['elemId'][$i];
+			if(isset($_POST['deleted'][$i]) && $_POST['deleted'][$i] == 1) $toInsert['deleted'] = 1;
+			
+			//TODO: There must be a better way of doing this...
+			$localId = $_POST['localId'][$i];
+			$toInsert['is_required'] = 0;
+			$toInsert['demand_unique'] = 0;
+			if(isset($_POST['required']) && in_array($localId,$_POST['required'])) $toInsert['is_required'] = 1;
+			if(isset($_POST['unique']) && in_array($localId,$_POST['unique'])) $toInsert['demand_unique'] = 1;
+			
 			//TODO: All elements should be gathered into a single query
 			$wpdb->insert( $formElementsTableName,$toInsert);//This escapes the strings automatically, right?
 		}
@@ -115,10 +124,10 @@ class GasqueregAdmin {
 		$formId = (int)$_GET['form'];
 		//Fetch, prepare, sort, and filter our data...
 		$attr = $wpdb->get_row("SELECT title,createdBy FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
-		/*if($wpdb->num_rows <= 0) {
+		if($wpdb->num_rows <= 0) {
 			echo '<p><em>Ett fel har uppstått, kunde inte hitta formuläret.</em></p>';
 			return;
-		}*/
+		}
 		if($attr->createdBy != $current_user->ID && !is_admin()) {
 			echo '<p><em>Du verkar inte ha behörighet att se svaren till detta formulär.</em></p>';
 			return;
