@@ -21,7 +21,7 @@ class GasqueregAdmin {
 			//Pass the elements to be printed by jQuery
 			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => $data) );
 			$prevForm = $wpdb->get_row("SELECT * FROM ".$wpdb->prefix."gasquereg_forms WHERE id = ".$formId);
-			if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
+			//if($wpdb->num_rows<1) return $this->error('Kunde inte hitta formuläret.');
 		} else {
 			wp_localize_script( 'gasqueRegCreateFormJS', 'gasquereg', array('oldElements' => '') );
 			$prevForm = (object) array('title' => '');

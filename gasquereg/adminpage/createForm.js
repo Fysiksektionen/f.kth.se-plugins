@@ -24,6 +24,7 @@ jQuery(document).ready(function() {
 				 '<a href="#" class="deleteButton">Ta bort</a>'+
 				 '<input type="hidden" name="localId[]" value="'+nextId+'">'+
 				 '<input type="hidden" name="elemId[]" value="'+elemId+'">'+
+				 '<input type="hidden" name="deleted[]" value="0" id="hiddenDelete-'+nextId+'">'+
 			 '</li>';
 			 jQuery(msg).hide().appendTo('#listOfFormElements').slideDown();
 			 nextId++;
@@ -33,8 +34,8 @@ jQuery(document).ready(function() {
 			 return false;
 	  });
 	  jQuery('#listOfFormElements').on("click",'.deleteButton',function() {
-		jQuery(this).parent().append('<input type="hidden" name="deleted[]" value="1">').slideUp();
-		
+		jQuery(this).parent().children("input[name='deleted[]']").attr("value","1");
+		jQuery(this).parent().slideUp();
 		return false;
 	  });
 	 //jQuery('#saveButton').button();
