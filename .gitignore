@@ -17,6 +17,7 @@ wpcas-w-ldap/wpcasldap-conf.php
 contact-form-7
 google-analytics-dashboard
 blackbox-debug-bar
+required-foundation-*
 custom-list-table-example
 tentapoang
 wp-db-driver
