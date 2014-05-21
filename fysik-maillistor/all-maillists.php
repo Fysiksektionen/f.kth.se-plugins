@@ -10,7 +10,7 @@ function fysik_maillistor_list() {
 	$query = "SELECT * FROM ".$wpdb->prefix."maillists";// WHERE ".$subquery;
 	$results = $wpdb->get_results($query);
 	foreach ($results as $row){
-		if($groups[$row->group] == 1 || is_super_admin()) { 
+		if($groups[$row->group] == 1 || is_super_admin()) {
 			echo "<a class='name' href='users.php?page=fysik_maillistor_edit&maillist=".$row->id."'>".$row->name."</a><br>";
 		} else {
 			echo $row->name." (Du har inte behörighet att se denna maillista)<br>";

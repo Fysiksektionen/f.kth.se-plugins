@@ -624,6 +624,7 @@ function is_fysiker($user) {
 	vara tills vidare.
 	
 	/leo fidjeland */
+	die('OH NO!');
   $passwdfile = '/etc/passwd';
   $search = utf8_decode(rawurldecode($user));
   if(isset($user) && $user) {

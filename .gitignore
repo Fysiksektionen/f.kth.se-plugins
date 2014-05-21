@@ -1,5 +1,6 @@
 /index.php
 LoopThePage.php
+post-expirator
 akismet
 cryptx
 disable-registration-email
@@ -20,3 +21,4 @@ blackbox-debug-bar
 wikiful
 crayon-syntax-highlighter
 required-foundation-*
+wp-super-cache
