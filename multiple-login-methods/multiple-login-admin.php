@@ -5,7 +5,7 @@ class ZetaMultipleLoginAdmin {
 
   public function __construct($options) {
     $this->options = $options->get_options();
-  
+
     //Add admin actions
     if(is_admin()) {
       add_action( 'admin_menu', array(&$this, 'admin_menu' ) );
@@ -17,7 +17,7 @@ class ZetaMultipleLoginAdmin {
   public function  admin_menu() {
     add_options_page( 'Multiple login options', 'Multiple login', 'manage_options', 'zeta-multiple-login', array(&$this, 'plugin_options') );
   }
-  
+
   //Register settings, sections and fields
   public function admin_init() {
     add_settings_section(
@@ -26,15 +26,15 @@ class ZetaMultipleLoginAdmin {
       array($this, 'print_section_basic_settings'),
       'zeta-multiple-login'
     );
-      
+
     add_settings_field(
       'basic_settings_login_chooser', 
       'Login chooser page ID', 
       array($this, 'print_setting_login_chooser'), 
       'zeta-multiple-login',
-      'basic_settings'			
+      'basic_settings'
     );
-    
+
     add_settings_field(
       'basic_settings_phpcas_path', 
       'Full path to phpCAS', 
@@ -42,7 +42,7 @@ class ZetaMultipleLoginAdmin {
       'zeta-multiple-login',
       'basic_settings'			
     );
-    
+
     add_settings_field(
       'basic_settings_defaultrole', 
       'New users default role', 
@@ -50,7 +50,7 @@ class ZetaMultipleLoginAdmin {
       'zeta-multiple-login',
       'basic_settings'			
     );
-    
+
     add_settings_field(
       'basic_settings_email_suffix', 
       'New users email suffix', 
@@ -58,22 +58,22 @@ class ZetaMultipleLoginAdmin {
       'zeta-multiple-login',
       'basic_settings'			
     );
-    
+
     add_settings_section(
       'cas_settings',
       'CAS settings',
       array($this, 'print_section_cas_settings'),
       'zeta-multiple-login'
     );
-    
+
     add_settings_field(
       'basic_settings_cas_host', 
       'CAS host', 
       array($this, 'print_setting_cas_host'), 
       'zeta-multiple-login',
-      'cas_settings'			
+      'cas_settings'
     );
-    
+
     add_settings_field(
       'basic_settings_cas_port', 
       'CAS port', 
@@ -165,11 +165,11 @@ class ZetaMultipleLoginAdmin {
   }
   
   public function print_setting_login_chooser() {
-    ?><input type="text" name="zeta_multiple_login[login_chooser]" value="<? echo $this->options['login_chooser'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[login_chooser]" value="<?php echo $this->options['login_chooser'];?>" /><?php
   }
   
   public function print_setting_phpcas_path() {
-    ?><input type="text" name="zeta_multiple_login[phpcas_path]" value="<? echo $this->options['phpcas_path'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[phpcas_path]" value="<?php echo $this->options['phpcas_path'];?>" /><?php
   }
   
   public function print_setting_defaultrole() {
@@ -186,7 +186,7 @@ class ZetaMultipleLoginAdmin {
   }
   
   public function print_setting_email_suffix() {
-    ?><input type="text" name="zeta_multiple_login[email_suffix]" value="<? echo $this->options['email_suffix'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[email_suffix]" value="<?php echo $this->options['email_suffix'];?>" /><?php
   }
   
   //CAS settings section
@@ -195,15 +195,15 @@ class ZetaMultipleLoginAdmin {
   }
   
   public function print_setting_cas_host() {
-    ?><input type="text" name="zeta_multiple_login[cas_host]" value="<? echo $this->options['cas_host'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[cas_host]" value="<?php echo $this->options['cas_host'];?>" /><?php
   }
   
   public function print_setting_cas_port() {
-    ?><input type="text" name="zeta_multiple_login[cas_port]" value="<? echo $this->options['cas_port'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[cas_port]" value="<?php echo $this->options['cas_port'];?>" /><?php
   }
   
   public function print_setting_cas_path() {
-    ?><input type="text" name="zeta_multiple_login[cas_path]" value="<? echo $this->options['cas_path'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[cas_path]" value="<?php echo $this->options['cas_path'];?>" /><?php
   }
   
   public function print_setting_cas_version() {
@@ -221,11 +221,11 @@ class ZetaMultipleLoginAdmin {
   }
   
   public function print_setting_ldap_host() {
-    ?><input type="text" name="zeta_multiple_login[ldap_host]" value="<? echo $this->options['ldap_host'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[ldap_host]" value="<?php echo $this->options['ldap_host'];?>" /><?php
   }
   
   public function print_setting_ldap_port() {
-    ?><input type="text" name="zeta_multiple_login[ldap_port]" value="<? echo $this->options['ldap_port'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[ldap_port]" value="<?php echo $this->options['ldap_port'];?>" /><?php
   }
   
   public function print_setting_ldap_useradd() {
@@ -236,7 +236,7 @@ class ZetaMultipleLoginAdmin {
   }
   
   public function print_setting_ldap_basedn() {
-    ?><input type="text" name="zeta_multiple_login[ldap_basedn]" value="<? echo $this->options['ldap_basedn'];?>" /><?php
+    ?><input type="text" name="zeta_multiple_login[ldap_basedn]" value="<?php echo $this->options['ldap_basedn'];?>" /><?php
   }
   
   //Display settings page

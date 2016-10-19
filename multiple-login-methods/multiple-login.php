@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Multiple Login
+Plugin Name: Multiple Login Methods
 Plugin URI: TODO
 Description: Allows to login from multiple authentication sources.
-Version: 0.0.1
+Version: 0.0.2
 Author: Calle "Zeta Two" Svensson <calle.svensson@zeta-two.com>
-Author URI: http://zeta-two.com
+Author URI: https://zeta-two.com
 License: MIT
 */
 ?>
@@ -83,16 +83,18 @@ class ZetaMultipleLogin {
           die( __( 'You do not have permission here', 'ZetaMultipleLogin' ));
         }
 			} //Past here, we have $wp_user
-			
-			
+
+
       //Make sure user is member of current site
-			if (!get_usermeta( $wp_user->ID, 'wp_'.$blog_id.'_capabilities')) {
-				if (function_exists('add_user_to_blog')) {
-					add_user_to_blog($blog_id, $wp_user->ID, $this->options['defaultrole']);
-				} else {
-					die( __( 'Could not add user to site.', 'ZetaMultipleLogin' ));
-				}
-			}
+	$blog_id = get_current_blog_id();
+
+	if(!is_user_member_of_blog($wp_user->ID, $blog_id)) {
+		if (function_exists('add_user_to_blog')) {
+			add_user_to_blog($blog_id, $wp_user->ID, $this->options['defaultrole']);
+		} else {
+			die( __( 'Could not add user to site.', 'ZetaMultipleLogin' ));
+		}
+	}
       
       wp_set_auth_cookie($wp_user->ID);
     } else {
